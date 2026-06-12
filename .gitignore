@@ -4,11 +4,11 @@ dist
 .env
 out
 
-# Local config — machine-specific, not shared
-.claude/settings.local.json
+# Claude Code local config & skill registry (auto-created by Claude Code)
+.claude/
 
 # Runtime user prefs (generated from template at first run)
-user_prefs.json
+# user_prefs.json
 
 # Pipeline output
 videos/
