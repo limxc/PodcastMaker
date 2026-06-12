@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "humanizer-zh": {
+      "source": "op7418/Humanizer-zh",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "ad6b2b1f1433413c64f6403dc322d950da175a058f494291bd4399e77cb587c7"
+    },
+    "video-podcast-maker": {
+      "source": "Agents365-ai/365-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/video-podcast-maker/skills/video-podcast-maker/SKILL.md",
+      "computedHash": "bd038723e3972ec882f44bbd764f4c1838dd566c648a29d0c9851d0cdb3aed12"
+    }
+  }
+}
