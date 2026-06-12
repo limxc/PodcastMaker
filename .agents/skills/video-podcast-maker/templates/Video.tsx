@@ -304,6 +304,24 @@ const SectionComponent = ({
   }
 };
 
+// Merge "outro" chapter into "references" for progress bar display only.
+// This keeps the progress bar clean by absorbing outro's duration into the
+// preceding references section, without affecting TransitionSeries sequences.
+const useProgressChapters = (sections: TimingSection[]) =>
+  React.useMemo(() => {
+    const merged = sections.map((s) => ({ ...s }));
+    const outroIdx = merged.findIndex((s) => s.name === "outro");
+    if (outroIdx > 0) {
+      const prev = merged[outroIdx - 1];
+      const outro = merged[outroIdx];
+      prev.duration_frames += outro.duration_frames;
+      prev.duration += outro.duration;
+      prev.end_time = outro.end_time;
+      merged.splice(outroIdx, 1);
+    }
+    return merged;
+  }, [sections]);
+
 // Main video component - receives editable props from Studio
 export const Video = (props: VideoProps) => {
   const timing = useTiming();
@@ -319,6 +337,9 @@ export const Video = (props: VideoProps) => {
       ? s.duration_frames + transitionCount * transitionFrames
       : s.duration_frames,
   }));
+
+  // Chapters for progress bar (outro merged into references)
+  const progressChapters = useProgressChapters(sections);
 
   return (
     <AbsoluteFill style={{ backgroundColor: props.backgroundColor }}>
@@ -340,11 +361,13 @@ export const Video = (props: VideoProps) => {
         </TransitionSeries>
       </Scale4K>
 
-      {/* Progress bar - outside scale(2) wrapper, renders at native 4K */}
-      <ChapterProgressBar props={props} chapters={timing.sections} />
+      {/* Progress bar - outside scale(2) wrapper, renders at native 4K
+          PER-VIDEO NOTE: filter/merge chapters as needed (e.g. merge "outro" into "references") */}
+      <ChapterProgressBar props={props} chapters={progressChapters} />
 
-      {/* Subtitles - outside scale(2), renders at native 4K, no FFmpeg needed */}
-      <Subtitles src={staticFile("podcast_audio.srt")} />
+      {/* Subtitles - outside scale(2), renders at native 4K, no FFmpeg needed.
+          bottomOffset must be > ChapterProgressBar height (~130px) to avoid overlap. */}
+      <Subtitles src={staticFile("podcast_audio.srt")} bottomOffset={170} />
 
       {/* BGM with configurable volume.
           Default `bgmVolume = 0` (off) — Step 11 mixes BGM via FFmpeg.
