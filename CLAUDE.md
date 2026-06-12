@@ -54,8 +54,10 @@
 
 分辨率后缀规则：`3840×2160` → `4k`，`1920×1080` → `1080p`，以此类推。
 
-- **有 BGM**：`final_video.mp4` → `{video-name}-{resolution_suffix}-bgm.mp4`
-- **无 BGM**：`output.mp4` → `{video-name}-{resolution_suffix}.mp4`
+**保留原始文件，复制一份改名**（而非移动/重命名），确保 `output.mp4` / `final_video.mp4` 仍然存在：
+
+- **有 BGM**：`final_video.mp4` 保留，复制为 `{video-name}-{resolution_suffix}-bgm.mp4`
+- **无 BGM**：`output.mp4` 保留，复制为 `{video-name}-{resolution_suffix}.mp4`
 
 **示例：**
 | 场景 | 最终文件 | 重命名后 |

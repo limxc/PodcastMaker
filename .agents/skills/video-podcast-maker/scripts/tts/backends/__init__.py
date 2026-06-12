@@ -120,7 +120,9 @@ def _resolve_voice(backend_name, env_var, default):
 BACKENDS = {
     'azure': {
         'module': '.azure',
-        'env': ['AZURE_SPEECH_KEY'],
+        # Dual-key: AZURE_SPEECH_KEY (region) or AZURE_TTS_KEY (endpoint).
+        # Validation is done dynamically in _build_config.
+        'env': [],
         'import': ('azure.cognitiveservices.speech', 'azure-cognitiveservices-speech',
                     'pip install azure-cognitiveservices-speech'),
         # Bumped from 400 to 2000 so a typical 5–10 min podcast fits in 1 chunk
@@ -226,8 +228,19 @@ def _build_config(name):
     """Build backend-specific config dict from environment variables."""
     config = {}
     if name == 'azure':
-        config['key'] = os.environ['AZURE_SPEECH_KEY']
-        config['region'] = os.environ.get('AZURE_SPEECH_REGION', 'eastasia')
+        config['endpoint'] = os.environ.get('AZURE_TTS_ENDPOINT')
+        if config['endpoint']:
+            key = os.environ.get('AZURE_TTS_KEY')
+            if not key:
+                raise MissingEnvVarError(
+                    "AZURE_TTS_KEY not set (required when AZURE_TTS_ENDPOINT is set)",
+                    var='AZURE_TTS_KEY',
+                )
+            config['key'] = key
+            config['region'] = None
+        else:
+            config['key'] = os.environ['AZURE_SPEECH_KEY']
+            config['region'] = os.environ.get('AZURE_SPEECH_REGION', 'eastasia')
         # Default to standard XiaoxiaoNeural — Multilingual variant ignores SAPI phoneme tags for zh-CN
         config['voice'] = _resolve_voice('azure', 'AZURE_TTS_VOICE', 'zh-CN-XiaoxiaoNeural')
         style, src = resolve_azure_style()

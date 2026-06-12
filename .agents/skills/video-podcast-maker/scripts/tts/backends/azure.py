@@ -13,7 +13,11 @@ def synthesize(chunks, config, output_dir, resume=False):
     """
     import azure.cognitiveservices.speech as speechsdk
 
-    speech_config = speechsdk.SpeechConfig(subscription=config['key'], region=config['region'])
+    endpoint = config.get('endpoint')
+    if endpoint:
+        speech_config = speechsdk.SpeechConfig(subscription=config['key'], endpoint=endpoint)
+    else:
+        speech_config = speechsdk.SpeechConfig(subscription=config['key'], region=config['region'])
     voice = config.get('voice', 'zh-CN-XiaoxiaoNeural')
     speech_config.SpeechSynthesisVoiceName = voice
     part_files = []

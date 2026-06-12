@@ -341,7 +341,7 @@ def verify(video_dir, strict=False, do_auto_fix=True):
     if wav.exists() and timing_path.exists():
         wav_info = ffprobe_audio(wav)
         try:
-            with open(timing_path) as f:
+            with open(timing_path, encoding='utf-8') as f:
                 timing = json.load(f)
         except (json.JSONDecodeError, OSError) as e:
             print(f"  ✗ timing.json unreadable: {e}")

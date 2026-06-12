@@ -177,6 +177,7 @@ def _run(args, started_at):
 
     # --- Read input ---
     os.makedirs(args.output_dir, exist_ok=True)
+    args.output_dir = os.path.abspath(args.output_dir)  # absolute paths avoid cwd confusion in ffmpeg subprocess
 
     if not os.path.exists(args.input):
         sys.exit(cli_envelope.emit_error(
